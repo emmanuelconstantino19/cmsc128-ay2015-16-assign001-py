@@ -1,0 +1,126 @@
+def numToWords(number):
+	track = 10
+	word = ''
+	tensList = ['ten','twenty', 'thirty', 'fourty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety']
+	teen = ['eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen']
+	digits = ['one','two','three','four','five','six','seven','eight','nine']
+	var = 0
+	i=-1
+	while (number!=0):
+		var = number % track
+		number = number - var
+		var = var/(track/10)
+		track*=10
+		i+=1	
+		temp = word.split(" ")
+	
+		if (i==1 or i==4) and var!=0:		#tens
+			if tensList[var-1]=='ten':
+				for c in range(len(digits)):
+					if temp[0]==digits[c]:
+						word = teen[c]
+						break
+			else:	
+				word = tensList[var-1] +" "+ word
+			continue	
+		elif (i==2 or i==5):						#hundred
+			word = "hundred" + " " + word	
+		elif i==3:						#thousand
+			if temp[0]=='hundred':
+				temp.remove('hundred')
+				word = ' '.join(temp);
+			word = "thousand" + " " + word
+	
+	
+		elif i==6:						#million
+			if temp[0]=='hundred':
+				temp.remove('hundred')
+				temp.remove('thousand')
+				word = ' '.join(temp);
+			word = "million" + " " + word
+		
+			
+	
+		if var!=0:
+			word = digits[var-1] + " " + word
+	
+
+	if var==0:
+		word = "zero"
+	return word;
+
+def wordsToNum(word):
+	temp = word.split(" ")
+	num = 0
+	acc = 0
+	tensList = ['ten','twenty', 'thirty', 'fourty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety']
+	digits = ['one','two','three','four','five','six','seven','eight','nine']
+	teen = ['eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen']
+	previous = 0
+	def checkTens(number):
+		for j in range(len(tensList)):
+				if(number==tensList[j]):
+					return 'true';
+		return;			
+
+	def checkTeen(number):
+		for j in range(len(teen)):
+				if(number==teen[j]):
+					return 'true';	
+		return;			
+
+	for i in temp:
+		if i=='hundred':
+			num*=100
+		elif i=='thousand':
+			if previous>99 and previous<1000:
+				acc-=previous
+				previous*=1000
+				acc+=previous
+			num*=1000
+		elif i=='million':
+			num*=1000000
+		
+		elif checkTens(i)=='true':
+			for j in range(len(tensList)):
+				if(i==tensList[j]):
+					num+= (j*10) + 10
+	
+		elif checkTeen(i)=='true':
+			for j in range(len(teen)):
+				if(i==teen[j]):
+					num = num + 10 + j + 1			
+				
+		else:		
+			acc+=num
+			previous = num			
+			for k in range(len(digits)):
+				if(i==digits[k]):
+					num=k+1
+	
+		
+		if(i==temp[len(temp)-1]):
+			acc+=num
+	return acc;			
+			
+		
+def numberDelimited(number,delimeter,place):
+	var = list(str(number))
+	if place==0:
+		var.append(delimeter)
+	else:	
+		var.insert(-place,delimeter)
+	number = ''.join(var);
+	return number;
+
+def wordsToCurrency(number,currency):
+	num = wordsToNum(number)
+	word = currency + str(num)
+	return word
+	
+	
+print numToWords(1234)
+print wordsToNum('one thousand two hundred thirty four')
+print wordsToCurrency('one thousand two hundred thirty four','USD')
+print numberDelimited(1234,',',3)
+
